@@ -6,23 +6,23 @@ MES는 대개 세 덩어리로 나뉩니다. 설비에서 데이터를 **모으�
 각 계층에 쓰이는 기술이 다르고, 하나만 알아서는 문제가 어디서 생겼는지 판단하기 어렵습니다.
 이 프로젝트는 그 세 계층을 각각의 기술로 직접 구현하고 연결해 본 것입니다.
 
-| | |
-| -------- | ---------------------------------------- |
-| **기간** | 2026.08 |
-| **인원** | 1인 — 기획 · 설계 · 개발 전 과정 |
+|          |                                                       |
+| -------- | ----------------------------------------------------- |
+| **기간** | 2026.08.29 ~ 2026.08.31                               |
+| **인원** | 1인 — 기획 · 설계 · 개발 전 과정                      |
 | **구성** | Python 수집기 → MS-SQL Server → C# WinForms 조회 화면 |
 
 <br>
 
 ![설비 현황 화면](docs/screen-mes.png)
 
-*설비 현황 화면. 자동 새로고침이 켜진 상태이며, 목표에 미달한 설비는 OEE 값만 붉게 표시된다.*
+_설비 현황 화면. 자동 새로고침이 켜진 상태이며, 목표에 미달한 설비는 OEE 값만 붉게 표시된다._
 
 <br>
 
 ![수집기 실행 화면](docs/screen-collector.png)
 
-*수집기 실행 화면. 5초 간격으로 설비 4대의 측정값이 한 번에 적재된다.*
+_수집기 실행 화면. 5초 간격으로 설비 4대의 측정값이 한 번에 적재된다._
 
 ---
 
@@ -55,12 +55,12 @@ MES는 대개 세 덩어리로 나뉩니다. 설비에서 데이터를 **모으�
 수집기가 멈춰도 화면은 마지막으로 저장된 데이터를 계속 보여주고, 화면을 껐다 켜도 수집은 이어집니다.
 실제 MES에서 현장 단말과 설비 인터페이스가 서로 독립적으로 동작해야 하는 이유와 같습니다.
 
-| 계층 | 기술 |
-| ---- | ---- |
-| 수집 | Python 3, `pyodbc` (ODBC Driver 18 for SQL Server) |
-| 저장 | Microsoft SQL Server 2025 Express |
+| 계층 | 기술                                                   |
+| ---- | ------------------------------------------------------ |
+| 수집 | Python 3, `pyodbc` (ODBC Driver 18 for SQL Server)     |
+| 저장 | Microsoft SQL Server 2025 Express                      |
 | 화면 | C# (.NET 8), Windows Forms, `Microsoft.Data.SqlClient` |
-| 도구 | Visual Studio 2022, sqlcmd |
+| 도구 | Visual Studio 2022, sqlcmd                             |
 
 ---
 
@@ -69,13 +69,13 @@ MES는 대개 세 덩어리로 나뉩니다. 설비에서 데이터를 **모으�
 설비의 **변하지 않는 정보**와 **계속 쌓이는 실적**을 두 테이블로 분리했습니다.
 목표 OEE를 실적마다 중복 저장하지 않고 마스터에 두어, 목표가 바뀌어도 한 곳만 고치면 됩니다.
 
-| `machine` — 설비 기준정보 | `production_log` — 생산 실적 |
-| --- | --- |
-| `machine_id` PK | `log_id` PK (IDENTITY) |
-| `name` (NVARCHAR) | `machine_id` FK → machine |
-| `type` | `logged_at` · `status` |
-| `target_oee` | `availability` · `performance` · `quality` · `oee` |
-| | `total_count` · `defect_count` |
+| `machine` — 설비 기준정보 | `production_log` — 생산 실적                       |
+| ------------------------- | -------------------------------------------------- |
+| `machine_id` PK           | `log_id` PK (IDENTITY)                             |
+| `name` (NVARCHAR)         | `machine_id` FK → machine                          |
+| `type`                    | `logged_at` · `status`                             |
+| `target_oee`              | `availability` · `performance` · `quality` · `oee` |
+|                           | `total_count` · `defect_count`                     |
 
 - **FK 제약** — 등록되지 않은 설비 코드로 실적이 들어오는 것을 DB 차원에서 차단
 - **복합 인덱스** `(machine_id, logged_at)` — 실적은 설비별·시간순으로 조회되므로 두 컬럼을 묶어 구성
